@@ -35,7 +35,7 @@ class WC_Quantities_and_Units_Advanced_Rules {
 	*/
 	public function page_loaded() {
 		
-		if ( isset( $_POST["ipq-advanced-rules-submit"] ) and $_POST["ipq-advanced-rules-submit"] == 'Y' ) {
+		if ( isset( $_POST["ipq-advanced-rules-submit"] ) and $_POST["ipq-advanced-rules-submit"] === 'Y' ) {
 			
 			check_admin_referer( "ipq-advanced-rules" );
 			$this->save_settings();
@@ -54,21 +54,21 @@ class WC_Quantities_and_Units_Advanced_Rules {
 		$settings = get_option( 'ipq_options' );
 		
 		// Minimum Product Notification 
-		if ( isset( $_POST['ipq_show_qty_note'] ) and $_POST['ipq_show_qty_note'] == 'on' ) {
+		if ( isset( $_POST['ipq_show_qty_note'] ) and $_POST['ipq_show_qty_note'] === 'on' ) {
 			$settings['ipq_show_qty_note'] = 'on';
 		} else {
 			$settings['ipq_show_qty_note'] = '';
 		}
 		
 		// Minimum Note Text 
-		if ( isset( $_POST['ipq_qty_text'] ) and $_POST['ipq_qty_text'] != '' ) {
+		if ( isset( $_POST['ipq_qty_text'] ) and !empty($_POST['ipq_qty_text']) ) {
 			$settings['ipq_qty_text'] = stripslashes( $_POST['ipq_qty_text'] );
 		} else {
 			$settings['ipq_qty_text'] = '';
 		}
 		
 		// Minimum Note Position
-		if ( isset( $_POST['ipq_show_qty_note_pos'] ) and $_POST['ipq_show_qty_note_pos'] == 'below' ) {
+		if ( isset( $_POST['ipq_show_qty_note_pos'] ) and $_POST['ipq_show_qty_note_pos'] === 'below' ) {
 			$settings['ipq_show_qty_note_pos'] = 'below';
 		} else {
 			$settings['ipq_show_qty_note_pos'] = 'above';
@@ -80,7 +80,7 @@ class WC_Quantities_and_Units_Advanced_Rules {
 		} 
 		
 		// Active Rule
-		if ( isset( $_POST['ipq_site_rule_active'] ) and $_POST['ipq_site_rule_active'] == 'on' ) {
+		if ( isset( $_POST['ipq_site_rule_active'] ) and $_POST['ipq_site_rule_active'] === 'on' ) {
 			$settings['ipq_site_rule_active'] = 'on';
 		} else {
 			$settings['ipq_site_rule_active'] = '';
@@ -115,19 +115,19 @@ class WC_Quantities_and_Units_Advanced_Rules {
 		
 		// Make sure min <= max
 		if ( isset( $step ) and isset( $max ) ) {
-			if ( $min > $max and $max != '' and $max != 0 ) {
+			if ( $min > $max and !empty($max) ) {
 				$max = $min;
 			}
 		}
 		
 		// Make sure min_oos <= max and max_oos
-		if ( isset( $min_oos ) and $min_oos != 0 ) {
-			if ( isset( $max_oos ) and $max_oos != 0 and
+		if ( isset( $min_oos ) and !empty($min_oos) ) {
+			if ( isset( $max_oos ) and !empty($max_oos) and
 				$min_oos > $max_oos ) {
 
 				$max_oos = $min_oos;
 			} else if ( !isset( $max_oos ) and isset ( $max ) and
-				$max != 0 and $min_oos > $max ) {
+				!empty($max) and $min_oos > $max ) {
 				$min_oos = $max;
 			}
 		}
@@ -169,7 +169,7 @@ class WC_Quantities_and_Units_Advanced_Rules {
 		
 		$options = get_option( 'ipq_options' );
 
-		if ($options == false) {
+		if (empty($options)) {
 			$options = array();
 		}
 
@@ -185,44 +185,44 @@ class WC_Quantities_and_Units_Advanced_Rules {
 				<tr>
 					<th>Activate Site Wide Rules?</th>
 					<td><input type='checkbox' name='ipq_site_rule_active' id='ipq_site_rule_active'
-						<?php if ( isset( $ipq_site_rule_active ) and $ipq_site_rule_active != '' ) echo 'checked'; ?>
+						<?php if ( isset( $ipq_site_rule_active ) and !empty($ipq_site_rule_active) ) echo 'checked'; ?>
 					 /></td>
 				</tr>
 
-				<?php if ( isset( $ipq_site_rule_active ) and $ipq_site_rule_active != '' ): ?>
+				<?php if ( isset( $ipq_site_rule_active ) and !empty($ipq_site_rule_active) ): ?>
 				
 					<tr>
 						<th>Site Wide Product Minimum</th>
 						<td><input type='number' name='ipq_site_min' id='ipq_site_min'
-							value='<?php if ( isset( $ipq_site_min ) and $ipq_site_min != '' ) echo $ipq_site_min; ?>' step="any"
+							value='<?php if ( isset( $ipq_site_min ) and !empty($ipq_site_min) ) echo $ipq_site_min; ?>' step="any"
 						 /></td>
 					</tr>
 					
 					<tr>
 						<th>Site Wide Product Maximum</th>
 						<td><input type='number' name='ipq_site_max' id='ipq_site_max'
-							value='<?php if ( isset( $ipq_site_max ) and $ipq_site_max != '' ) echo $ipq_site_max; ?>' step="any"
+							value='<?php if ( isset( $ipq_site_max ) and !empty($ipq_site_max) ) echo $ipq_site_max; ?>' step="any"
 						 /></td>
 					</tr>
 					
 					<tr>
 						<th>Site Wide Product Minimum Out of Stock</th>
 						<td><input type='number' name='ipq_site_min_oos' id='ipq_site_min_oos'
-							value='<?php if ( isset( $ipq_site_min_oos ) and $ipq_site_min_oos != '' ) echo $ipq_site_min_oos; ?>' step="any"
+							value='<?php if ( isset( $ipq_site_min_oos ) and !empty($ipq_site_min_oos) ) echo $ipq_site_min_oos; ?>' step="any"
 						 /></td>
 					</tr>
 					
 					<tr>
 						<th>Site Wide Product Maximum Out of Stock</th>
 						<td><input type='number' name='ipq_site_max_oos' id='ipq_site_max_oos'
-							value='<?php if ( isset( $ipq_site_max_oos ) and $ipq_site_max_oos != '' ) echo $ipq_site_max_oos; ?>' step="any"
+							value='<?php if ( isset( $ipq_site_max_oos ) and !empty($ipq_site_max_oos) ) echo $ipq_site_max_oos; ?>' step="any"
 						 /></td>
 					</tr>
 					
 					<tr>
 						<th>Site Wide Step Value</th>
 						<td><input type='number' step='any' name='ipq_site_step' id='ipq_site_step'
-							value='<?php if ( isset( $ipq_site_step ) and $ipq_site_step != '' ) echo $ipq_site_step; ?>' step="any"
+							value='<?php if ( isset( $ipq_site_step ) and !empty($ipq_site_step) ) echo $ipq_site_step; ?>' step="any"
 						 /></td>
 					</tr>
 					
@@ -238,7 +238,7 @@ class WC_Quantities_and_Units_Advanced_Rules {
 				<tr>
 					<th>Show Quantity Notification on Product Page?</th>
 					<td><input type='checkbox' name='ipq_show_qty_note' id='ipq_show_qty_note' 
-						<?php if ( isset( $ipq_show_qty_note ) and $ipq_show_qty_note != '' ) echo 'checked'; ?>
+						<?php if ( isset( $ipq_show_qty_note ) and !empty($ipq_show_qty_note) ) echo 'checked'; ?>
 						/></td>
 				</tr>
 				
@@ -246,8 +246,8 @@ class WC_Quantities_and_Units_Advanced_Rules {
 					<th>Notification Position</th>
 					<td>
 						<select name='ipq_show_qty_note_pos' id='ipq_show_qty_note_pos'>
-							<option value='above' <?php if ( isset( $ipq_show_qty_note_pos ) and $ipq_show_qty_note_pos == 'above' ) echo 'selected' ?>>Above Add To Cart</option>
-							<option value='below' <?php if ( isset( $ipq_show_qty_note_pos ) and  $ipq_show_qty_note_pos == 'below' ) echo 'selected' ?>>Below Add To Cart</option>
+							<option value='above' <?php if ( isset( $ipq_show_qty_note_pos ) and $ipq_show_qty_note_pos === 'above' ) echo 'selected' ?>>Above Add To Cart</option>
+							<option value='below' <?php if ( isset( $ipq_show_qty_note_pos ) and  $ipq_show_qty_note_pos === 'below' ) echo 'selected' ?>>Below Add To Cart</option>
 						</select>
 					</td>
 				</tr>
@@ -255,7 +255,7 @@ class WC_Quantities_and_Units_Advanced_Rules {
 				<tr>
 					<th>Quantity Notification Text</th>
 					<td><input type='text' name='ipq_qty_text' id='ipq_qty_text' value='<?php 
-							if ( isset( $ipq_qty_text ) and $ipq_qty_text != '' ) {
+							if ( isset( $ipq_qty_text ) and !empty($ipq_qty_text) ) {
 								echo $ipq_qty_text; 
 							} else {
 								echo $qty_text_default;	
@@ -272,7 +272,7 @@ class WC_Quantities_and_Units_Advanced_Rules {
 				</tr>
 				<tr>
 					<th>Custom Quantity Note HTML Class</th>
-					<td><input type='text' name='ipq_qty_class' id='ipq_qty_class' value='<?php if ( isset( $ipq_qty_class ) and $ipq_qty_class != '' ) echo $ipq_qty_class; ?>' /></td>
+					<td><input type='text' name='ipq_qty_class' id='ipq_qty_class' value='<?php if ( isset( $ipq_qty_class ) and !empty($ipq_qty_class) ) echo $ipq_qty_class; ?>' /></td>
 				</tr>
 				
 				<tr>

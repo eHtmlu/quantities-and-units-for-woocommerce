@@ -95,7 +95,7 @@ class WC_Quantities_and_Units {
 		);
 
 		// If no options set the defaults
-		if ( $options == false ) {
+		if ( $options === false ) {
 			add_option( 'ipq_options', $defaults, '', false );
 		
 		// Otherwise check that all option are set
@@ -145,7 +145,7 @@ class WC_Quantities_and_Units {
 			// If their rule value is false, apply all roles 
 			$roles = get_post_meta( $rule->ID, '_roles', true );
 			
-			if ( $roles == false ) {
+			if ( empty($roles) ) {
 				update_post_meta( $rule->ID, '_roles', $applied_roles, false );
 			}
 		}
@@ -184,7 +184,7 @@ class WC_Quantities_and_Units {
 		global $post, $woocommerce;
 	
 		// Only display script if we are on a single product or cart page
-		if ( is_object( $post ) and $post->post_type == 'product' or is_cart() ) {
+		if ( is_object( $post ) and $post->post_type === 'product' or is_cart() ) {
 			
 			wp_enqueue_script( 
 				'ipq_validation', 
@@ -199,13 +199,13 @@ class WC_Quantities_and_Units {
 				$pro = get_product( $post );
 				
 				// Check if variable
-				if ( $pro->product_type == 'variable' ) {
+				if ( $pro->product_type === 'variable' ) {
 
 					// See what rules are being applied
 					$rule_result = wcqu_get_applied_rule( $pro );
 				
 					// If the rule result is inactive, we're done
-					if ( $rule_result == 'inactive' or $rule_result == null ) {
+					if ( $rule_result === 'inactive' or $rule_result === null ) {
 						return;
 					
 					// Get values for Override, Sitewide and Rule Controlled Products
@@ -217,13 +217,13 @@ class WC_Quantities_and_Units {
 					$stock = $pro->get_stock_quantity();
 			
 					// Check if the product is under stock management and out of stock
-					if ( strlen( $stock ) != 0 and $stock <= 0 ) {
+					if ( strlen( $stock ) !== 0 and $stock <= 0 ) {
 						
-						if ( $values['min_oos'] != '' ) {
+						if ( !empty($values['min_oos']) ) {
 							$values['min_value'] = $values['min_oos'];
 						}
 						
-						if ( $values['max_oos'] != '' ) {
+						if ( !empty($values['max_oos']) ) {
 							$values['max_value'] = $values['max_oos'];
 						}
 						
@@ -320,7 +320,7 @@ class WC_Quantities_and_Units {
 		global $current_user;
 		$user_id = $current_user->ID;
 		
-		if ( isset($_GET['wpbo_thumbnail_plugin_dismiss']) && '0' == $_GET['wpbo_thumbnail_plugin_dismiss'] ) {
+		if ( isset($_GET['wpbo_thumbnail_plugin_dismiss']) && '0' === $_GET['wpbo_thumbnail_plugin_dismiss'] ) {
 			add_user_meta($user_id, 'wpbo_thumbnail_input_notice', 'true', true);
 		}
 	}

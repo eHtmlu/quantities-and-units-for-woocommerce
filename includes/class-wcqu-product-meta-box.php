@@ -17,7 +17,7 @@ class WC_Quantities_and_Units_Quantity_Meta_Boxes {
 	public function meta_box_create() {
 		global $post, $woocommerce;
 
-		if ( $post->post_type == 'product' ) {
+		if ( $post->post_type === 'product' ) {
 			
 			$product = get_product( $post->ID );
 			$unsupported_product_types = array( 'external', 'grouped' );
@@ -62,20 +62,20 @@ class WC_Quantities_and_Units_Quantity_Meta_Boxes {
 			// be used later below in the if statements
 			$rule = $newRule ? $newRule : $rule;
 
-			if ( $newRule == 'inactive' or $newRule == 'override' or $newRule == 'sitewide' )
+			if ( $newRule === 'inactive' or $newRule === 'override' or $newRule === 'sitewide' )
 				continue;
 				
 			$rules_by_role[$name] = $newRule;
 		}
 		
 		// Display Rule Being Applied
-		if ( $rule == 'inactive' ) {
+		if ( $rule === 'inactive' ) {
 			echo "<div class='inactive-rule rule-message'>No rule is being applied becasue you've deactivated the plugin for this product.</div>";
 			
-		} elseif ( $rule == 'override' ) {
+		} elseif ( $rule === 'override' ) {
 			echo "<div class='overide-rule rule-message'>The values below are being used because you've chosen to override any applied rules for this product.</div>";
 		
-		} elseif ( $rule == 'sitewide' ) {
+		} elseif ( $rule === 'sitewide' ) {
 			?>
 			<?php $values = wcqu_get_value_from_rule( 'all', $pro, $rule ); ?>
 			<div class="active-rule">
@@ -111,7 +111,7 @@ class WC_Quantities_and_Units_Quantity_Meta_Boxes {
 				</table>
 			</div>
 			<?php 
-		} elseif ( (! isset( $rule->post_title ) or $rule->post_title == null) ) {
+		} elseif ( (! isset( $rule->post_title ) or empty($rule->post_title)) ) {
 			echo "<div class='no-rule rule-message'>No rule is currently being applied to this product.</div>";
 			
 		} else { ?>
@@ -139,12 +139,12 @@ class WC_Quantities_and_Units_Quantity_Meta_Boxes {
 						<th>Priority</th>
 					</tr>
 				<?php foreach ( $rules_by_role as $role => $rule ): ?>
-					<?php if ( $rule != null )
+					<?php if ( !empty($rule) )
 						$values = wcqu_get_value_from_rule( 'all', $pro, $rule ); 
 					?>
 					<tr>
 						<td><?php echo $role ?></td>
-						<?php if ( $rule != null ): ?>
+						<?php if ( !empty($rule) ): ?>
 							<td><a href='<?php echo get_edit_post_link( $rule->ID ) ?>' target="_blank"><?php echo $rule->post_title ?></a></td>
 							<td><?php echo $values['min_value'] ?></td>
 							<td><?php echo $values['max_value'] ?></td>
@@ -182,13 +182,13 @@ class WC_Quantities_and_Units_Quantity_Meta_Boxes {
 		
 		// Print the form ?>	
 		<div class="rule-input-boxes">
-			<input type="checkbox" name="_wpbo_deactive" <?php if ( $deactive == 'on' ) echo 'checked'; ?> />
+			<input type="checkbox" name="_wpbo_deactive" <?php if ( $deactive === 'on' ) echo 'checked'; ?> />
 			<span>Deactivate Quantity Rules on this Product?</span>
 			
-			<input type="checkbox" name="_wpbo_override" id='toggle_override' <?php if ( $over == 'on' ) echo 'checked'; ?> />
+			<input type="checkbox" name="_wpbo_override" id='toggle_override' <?php if ( $over === 'on' ) echo 'checked'; ?> />
 			<span>Override Quantity Rules with Values Below</span>
 			
-			<span class='wpbo_product_values' <?php if ( $over != 'on' ) echo "style='display:none'"?>>
+			<span class='wpbo_product_values' <?php if ( $over !== 'on' ) echo "style='display:none'"?>>
 				<label for="_wpbo_step">Step Value</label>
 				<input type="number" name="_wpbo_step" value="<?php echo $step; ?>" step="any" />
 				
@@ -287,7 +287,7 @@ class WC_Quantities_and_Units_Quantity_Meta_Boxes {
 		}
 		
 		if( isset( $_POST['_wpbo_minimum'] )) {
-			if ( $min != 0 ) {
+			if ( !empty($min) ) {
 				$min = wcqu_validate_number( $min );
 			}
 			update_post_meta( 
@@ -300,7 +300,7 @@ class WC_Quantities_and_Units_Quantity_Meta_Boxes {
 		/* Make sure Max > Min */
 		if( isset( $_POST['_wpbo_maximum'] )) {
 			$max = $_POST['_wpbo_maximum'];
-			if ( isset( $min ) and $max < $min and $max != 0 ) {
+			if ( isset( $min ) and $max < $min and !empty($max) ) {
 				$max = $min;
 			}
 		
@@ -315,7 +315,7 @@ class WC_Quantities_and_Units_Quantity_Meta_Boxes {
 		if( isset( $_POST['_wpbo_minimum_oos'] )) {
 			$min_oos = stripslashes( $_POST['_wpbo_minimum_oos'] );
 			
-			if ( $min_oos != 0 ) {
+			if ( !empty($min_oos) ) {
 				$min_oos = wcqu_validate_number( $min_oos );
 			}
 			update_post_meta( 
@@ -331,19 +331,19 @@ class WC_Quantities_and_Units_Quantity_Meta_Boxes {
 			$max_oos = stripslashes( $_POST['_wpbo_maximum_oos'] );
 			
 			// Allow the value to be unset
-			if ( $max_oos != '' ) {
+			if ( !empty($max_oos) ) {
 				
 				// Validate the number			
-				if ( $max_oos != 0 ) {
+				if ( !empty($max_oos) ) {
 					$max_oos = wcqu_validate_number( $max_oos );
 				} 
 				
 				// Max must be bigger then min
-				if ( isset( $min_oos ) and $min_oos != 0 ) {
+				if ( isset( $min_oos ) and !empty($min_oos) ) {
 					if ( $min_oos > $max_oos )
 						$max_oos = $min_oos;
 					
-				} elseif ( isset( $min ) and $min != 0 ){
+				} elseif ( isset( $min ) and !empty($min) ){
 					if ( $min > $max_oos ) {
 						$max_oos = $min;
 					}

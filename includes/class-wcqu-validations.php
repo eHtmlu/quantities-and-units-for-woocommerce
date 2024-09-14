@@ -73,29 +73,29 @@ class WC_Quantities_and_Units_Quantity_Validations {
 		$rule = wcqu_get_applied_rule( $product );
 		$values = wcqu_get_value_from_rule( 'all', $product, $rule );
 		
-		if ( $values != null )
+		if ( !empty($values) )
 			extract( $values ); // $min_value, $max_value, $step, $priority, $min_oos, $max_oos
 				
 		// Inactive Products can be ignored
-		if ( $values == null )
+		if ( empty($values) )
 			return true;
 	
 		// Check if the product is out of stock 
 		$stock = $product->get_stock_quantity();
 	
 		// Adjust min value if item is out of stock
-		if ( strlen( $stock ) != 0 and $stock <= 0 and isset( $min_oos ) and $min_oos != null  ) {
+		if ( strlen( $stock ) !== 0 and $stock <= 0 and isset( $min_oos ) and !empty($min_oos)  ) {
 			$min_value = $min_oos;
 		}
 		
 		// Adjust max value if item is out of stock
-		if ( strlen( $stock ) != 0 and $stock <= 0 and isset( $max_oos ) and $max_oos != null ) {
+		if ( strlen( $stock ) !== 0 and $stock <= 0 and isset( $max_oos ) and !empty($max_oos) ) {
 			$max_value = $max_oos;
 		}
 		
 		// Min Validation
 		// added $min_value != 0 since List Items starts all products at 0 quantity.
-		if ( $min_value != null && $min_value != 0 && $quantity < $min_value ) {
+		if ( !empty($min_value) && $quantity < $min_value ) {
 			
 			if ( $WC_Quantities_and_Units->wc_version >= 2.1 ) {
 				wc_add_notice( sprintf( __( "You must add a minimum of %s %s's to your cart.", 'woocommerce' ), $min_value, $title ), 'error' );
@@ -109,7 +109,7 @@ class WC_Quantities_and_Units_Quantity_Validations {
 		}
 	
 		// Max Validation
-		if ( $max_value != null && $quantity > $max_value ) {
+		if ( !empty($max_value) && $quantity > $max_value ) {
 			
 			if ( $WC_Quantities_and_Units->wc_version >= 2.1 ) {
 				wc_add_notice( sprintf( __( "You may only add a maximum of %s %s's to your cart.", 'woocommerce' ), $max_value, $title ), 'error' );
@@ -122,7 +122,7 @@ class WC_Quantities_and_Units_Quantity_Validations {
 		}
 		
 		// Subtract the min value from quantity to calc remainder if min value exists
-		if ( $min_value != 0 ) {
+		if ( !empty($min_value) ) {
 			$rem_qty = $quantity - $min_value;
 		} else {
 			$rem_qty = $quantity;
@@ -132,7 +132,7 @@ class WC_Quantities_and_Units_Quantity_Validations {
 		$step = (float)$step;
 		
 		// Step Validation	
-		if ( $step != null && wcqu_fmod_round($rem_qty, $step) != 0 ) {
+		if ( !empty($step) && !empty(wcqu_fmod_round($rem_qty, $step)) ) {
 		
 			if ( $WC_Quantities_and_Units->wc_version >= 2.1 ) {
 				wc_add_notice( sprintf( __( "You may only add a %s in multiples of %s to your cart.", 'woocommerce' ), $title, $step ), 'error' );
@@ -146,21 +146,21 @@ class WC_Quantities_and_Units_Quantity_Validations {
 		}
 		
 		// Don't run Cart Validations if user is updating the cart
-		if ( $from_cart != true ) {
+		if ( $from_cart !== true ) {
 		
 			// Get Cart Quantity for the product
 			foreach( $woocommerce->cart->get_cart() as $cart_item_key => $values ) {
 				$_product = $values['data'];
-				if( $product_id == $_product->id ) {
+				if( (int) $product_id === (int) $_product->id ) {
 					$cart_qty = $values['quantity'];
 				}
 			}
 			
 			//  If there aren't any items in the cart already, ignore these validations
-			if ( isset( $cart_qty ) and $cart_qty != null ) {
+			if ( isset( $cart_qty ) and !empty($cart_qty) ) {
 			
 				// Total Cart Quantity Min Validation
-				if ( $min_value != null && ( $quantity + $cart_qty ) < $min_value ) {
+				if ( !empty($min_value) && ( $quantity + $cart_qty ) < $min_value ) {
 					
 					if ( $WC_Quantities_and_Units->wc_version >= 2.1 ) {
 						wc_add_notice( sprintf( __( "Your cart must have a minimum of %s %s's to proceed.", 'woocommerce' ), $min_value, $title ), 'error' );
@@ -173,7 +173,7 @@ class WC_Quantities_and_Units_Quantity_Validations {
 				}
 			
 				// Total Cart Quantity Max Validation
-				if ( $max_value != null && ( $quantity + $cart_qty ) > $max_value ) {
+				if ( !empty($max_value) && ( $quantity + $cart_qty ) > $max_value ) {
 					
 					if ( $WC_Quantities_and_Units->wc_version >= 2.1 ) {
 						wc_add_notice( sprintf( __( "You can only purchase a maximum of %s %s's at once and your cart has %s %s's in it already.", 'woocommerce' ), $max_value, $title, $cart_qty, $title ), 'error' );
@@ -186,7 +186,7 @@ class WC_Quantities_and_Units_Quantity_Validations {
 				}
 				
 				// Subtract the min value from cart quantity to calc remainder if min value exists
-				if ( $min_value != 0 ) {
+				if ( !empty($min_value) ) {
 					$cart_qty_rem = $quantity + $cart_qty - $min_value;
 				} else {
 					$cart_qty_rem = $quantity + $cart_qty;
@@ -194,7 +194,7 @@ class WC_Quantities_and_Units_Quantity_Validations {
 				
 				// Total Cart Quantity Step Validation
 				$cart_qty_rem = (float)$cart_qty_rem;
-				if ( $step != null && $step != 0 && $cart_qty_rem != 0 && wcqu_fmod_round($cart_qty_rem, $step) != 0 ) {
+				if ( !empty($step) && !empty($cart_qty_rem) && !empty(wcqu_fmod_round($cart_qty_rem, $step)) ) {
 					if ( $WC_Quantities_and_Units->wc_version >= 2.1 ) {
 						wc_add_notice( sprintf( __("You may only purchase %s in multiples of %s.", 'woocommerce' ), $title, $step ), 'error' );
 					

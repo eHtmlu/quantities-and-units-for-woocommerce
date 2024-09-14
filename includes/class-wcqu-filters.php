@@ -31,7 +31,7 @@ class WC_Quantities_and_Units_Filters {
 	 */
 	public function woocommerce_loop_add_to_cart_args( $args, $product ) {
 		// Return Defaults if it isn't a simple product 
-		if( $product->product_type != 'simple' ) {
+		if( $product->product_type !== 'simple' ) {
 			return $args;
 		}
 
@@ -68,7 +68,7 @@ class WC_Quantities_and_Units_Filters {
 	public function input_min_value( $default, $product ) {
 
 		// Return Defaults if it isn't a simple product 
-		if( $product->product_type != 'simple' ) {
+		if( $product->product_type !== 'simple' ) {
 			return $default;
 		}
 		
@@ -79,7 +79,7 @@ class WC_Quantities_and_Units_Filters {
 		$min = wcqu_get_value_from_rule( 'min', $product, $rule );
 		
 		// Return Value
-		if ( $min == '' or $min == null or (isset($min['min']) and $min['min'] == "")) {
+		if ( empty($min) or (isset($min['min']) and empty($min['min']))) {
 			return $default;
 		} else {
 			return $min;
@@ -98,7 +98,7 @@ class WC_Quantities_and_Units_Filters {
 	public function input_max_value( $default, $product ) {	
 		
 		// Return Defaults if it isn't a simple product
-		if( $product->product_type != 'simple' ) {
+		if( $product->product_type !== 'simple' ) {
 			return $default;
 		}
 		
@@ -109,7 +109,7 @@ class WC_Quantities_and_Units_Filters {
 		$max = wcqu_get_value_from_rule( 'max', $product, $rule );
 	
 		// Return Value
-		if ( $max == '' or $max == null or (isset($max['max']) and $max['max'] == "")) {
+		if ( empty($max) or (isset($max['max']) and empty($max['max']))) {
 			return $default;
 		} else {
 			return $max;
@@ -128,7 +128,7 @@ class WC_Quantities_and_Units_Filters {
 	public function input_step_value( $default, $product ) {
 		
 		// Return Defaults if it isn't a simple product
-		if( $product->product_type != 'simple' ) {
+		if( $product->product_type !== 'simple' ) {
 			return $default;
 		}
 		
@@ -139,7 +139,7 @@ class WC_Quantities_and_Units_Filters {
 		$step = wcqu_get_value_from_rule( 'step', $product, $rule );
 	
 		// Return Value
-		if ( $step == '' or $step == null or (isset($step['step']) and $step['step'] == "")) {
+		if ( empty($step) or (isset($step['step']) and empty($step['step']))) {
 			return $default;
 		} else {
 			return isset($step['step']) ? $step['step'] : $step;
@@ -160,7 +160,7 @@ class WC_Quantities_and_Units_Filters {
 		// Return Defaults if it isn't a simple product
 		/* Commented out to allow for grouped and variable products
 		*  on their product pages
-		if( $product->product_type != 'simple' ) {
+		if( $product->product_type !== 'simple' ) {
 			return $args;
 		}
 		*/
@@ -171,7 +171,7 @@ class WC_Quantities_and_Units_Filters {
 		// Get Value from Rule
 		$values = wcqu_get_value_from_rule( 'all', $product, $rule );
 
-		if ( $values == null ) {
+		if ( empty($values) ) {
 			return $args;
 		}
 		
@@ -182,29 +182,29 @@ class WC_Quantities_and_Units_Filters {
 		$stock = $product->get_stock_quantity();
 		
 		// Check stock status and if Out try Out of Stock value	
-		if ( strlen( $stock ) != 0 and $stock <= 0 and isset( $values['min_oos'] ) and $values['min_oos'] != '' ) {
+		if ( strlen( $stock ) !== 0 and $stock <= 0 and isset( $values['min_oos'] ) and !empty($values['min_oos']) ) {
 			$args['min_value'] = $values['min_oos'];
 			
 		// Otherwise just check normal min	
-		} elseif ( $values['min_value'] != ''  ) {
+		} elseif ( !empty($values['min_value'])  ) {
 			$args['min_value'] 	 = $values['min_value'];
 		
 		// If no min, try step	
-		} elseif ( $values['min_value'] == '' and $values['step'] != '' ) {
+		} elseif ( empty($values['min_value']) and !empty($values['step']) ) {
 			$args['min_value'] 	 = $values['step'];
 		} 
 		
 		// Check stock status and if Out try Out of Stock value	
-		if ( $stock <= 0 and isset( $values['min_oos'] ) and $values['max_oos'] != '' ) {
+		if ( $stock <= 0 and isset( $values['min_oos'] ) and !empty($values['max_oos']) ) {
 			$args['max_value'] = $values['max_oos'];
 		
 		// Otherwise just check normal max	
-		} elseif ($values['max_value'] != ''  ) {
+		} elseif (!empty($values['max_value'])  ) {
 			$args['max_value'] 	 = $values['max_value'];
 		}
 		
 		// Set step value
-		if ( $values['step'] != '' ) {
+		if ( !empty($values['step']) ) {
 			$args['step'] = $values['step'];
 		}
 		

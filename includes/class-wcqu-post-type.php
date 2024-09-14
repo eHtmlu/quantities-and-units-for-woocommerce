@@ -115,7 +115,7 @@ class WC_Quantities_and_Units_Quantity_Rule_Post_Type {
 		        
 		    case 'cats':
 		   		$cats = get_post_meta( $id, '_cats', false);
-		   		if ( $cats != false and count( $cats[0] ) > 0 ) {	   		
+		   		if ( !empty($cats) and count( $cats[0] ) > 0 ) {	   		
 			   		foreach ( $cats[0] as $cat ){
 		
 			   			$taxonomy = 'product_cat'; 	
@@ -129,7 +129,7 @@ class WC_Quantities_and_Units_Quantity_Rule_Post_Type {
 		        
 		    case 'product_tags':
 		    	$tags = get_post_meta( $id, '_tags', false);
-		   		if ( $tags != null and count( $tags[0] ) > 0) {	   		
+		   		if ( !empty($tags) and count( $tags[0] ) > 0) {	   		
 			   		foreach ( $tags[0] as $tag ){
 		
 			   			$taxonomy = 'product_tag'; 	
@@ -143,7 +143,7 @@ class WC_Quantities_and_Units_Quantity_Rule_Post_Type {
 		    
 		    case 'roles':
 		   		$roles = get_post_meta( $id, '_roles', false);
-		   		if ( $roles != null and count( $roles[0] ) > 0) {	   		
+		   		if ( !empty($roles) and count( $roles[0] ) > 0) {	   		
 			   		foreach ( $roles[0] as $role ){
 			   			echo ucfirst( $role ) . "<br />";	
 			   		}
@@ -238,7 +238,7 @@ class WC_Quantities_and_Units_Quantity_Rule_Post_Type {
 		// Get selected categories
 		$cats = get_post_meta( $post->ID, '_cats', false);
 	
-		if ( $cats != null ) {
+		if ( !empty($cats) ) {
 			$cats = $cats[0];
 		}
 		
@@ -287,7 +287,7 @@ class WC_Quantities_and_Units_Quantity_Rule_Post_Type {
 			foreach ( $children as $child_id ){
 				$child = get_term_by( 'id', $child_id, $taxonomy_name );
 				// If the child is at the second level relative to the last printed element, exclude it
-				if ( is_object( $child ) and $child->parent == $term->term_id ) {
+				if ( is_object( $child ) and (int) $child->parent === (int) $term->term_id ) {
 					$this->print_tax_inputs( $child, $taxonomy_name, $cats, $level );
 				}
 			}
@@ -322,7 +322,7 @@ class WC_Quantities_and_Units_Quantity_Rule_Post_Type {
 		$tags = get_terms( 'product_tag', $args );
 		
 		$included_tags = get_post_meta( $post->ID, '_tags');
-		if ( $included_tags != false ){
+		if ( !empty($included_tags) ){
 			$included_tags = $included_tags[0];
 		}
 
@@ -367,7 +367,7 @@ class WC_Quantities_and_Units_Quantity_Rule_Post_Type {
 		
 		// Get applied roles
 		$applied_roles = get_post_meta( $post->ID, '_roles' );
-		if ( $applied_roles != false ){
+		if ( !empty($applied_roles) ){
 			$applied_roles = $applied_roles[0];
 		}
 		// Create Nonce Field
@@ -525,7 +525,7 @@ class WC_Quantities_and_Units_Quantity_Rule_Post_Type {
 			$max = $_POST['max'];
 			
 			// Validate Max is not less then Min
-			if ( isset( $min ) and $max < $min and $max != 0 ) {
+			if ( isset( $min ) and $max < $min and !empty($max) ) {
 				$max = $min;
 			}
 			
@@ -537,11 +537,11 @@ class WC_Quantities_and_Units_Quantity_Rule_Post_Type {
 			$max_oos = $_POST['max_oos'];
 				
 			// Max must be bigger then min
-			if ( $max_oos != '' and isset( $min_oos ) and $min_oos != 0 ) {
+			if ( !empty($max_oos) and !empty($min_oos) ) {
 				if ( $min_oos > $max_oos )
 					$max_oos = $min_oos;
 				
-			} elseif ( $max_oos != '' and isset( $min ) and $min != 0 ){
+			} elseif ( !empty($max_oos) and !empty($min) ){
 				if ( $min > $max_oos ) {
 					$max_oos = $min;
 				}
@@ -591,7 +591,7 @@ class WC_Quantities_and_Units_Quantity_Rule_Post_Type {
 		// See which terms were included
 		foreach ( $terms as $term ) {
 			$term_name = '_wpbo_cat_' . $term->term_id;
-			if ( isset( $_POST[ $term_name ] ) and $_POST[ $term_name ] == 'on' ) {
+			if ( isset( $_POST[ $term_name ] ) and $_POST[ $term_name ] === 'on' ) {
 				array_push( $cats, $term->term_id );		
 			} 
 		}
@@ -637,7 +637,7 @@ class WC_Quantities_and_Units_Quantity_Rule_Post_Type {
 			foreach ( $tags as $tag ) {
 				
 				$tag_name = '_wpbo_tag_' . $tag->term_id;
-				if ( isset( $_POST[ $tag_name ] ) and $_POST[ $tag_name ] == 'on' ) {
+				if ( isset( $_POST[ $tag_name ] ) and $_POST[ $tag_name ] === 'on' ) {
 					array_push( $tags_included, $tag->term_id );		
 				} 
 			}
@@ -678,13 +678,13 @@ class WC_Quantities_and_Units_Quantity_Rule_Post_Type {
 			$role_name = '_wpbo_role_' . $slug;
 			
 			// If role is set add it to the applied list
-			if ( isset( $_POST[ $role_name ] ) and $_POST[ $role_name ] == 'on' ) {
+			if ( isset( $_POST[ $role_name ] ) and $_POST[ $role_name ] === 'on' ) {
 				array_push( $applied_roles, $slug );
 			}
 		}
 		
 		// If guest role is set add it to the applied list
-		if ( isset( $_POST[ '_wpbo_role_guest' ] ) and $_POST[ '_wpbo_role_guest' ] == 'on' ) {
+		if ( isset( $_POST[ '_wpbo_role_guest' ] ) and $_POST[ '_wpbo_role_guest' ] === 'on' ) {
 			array_push( $applied_roles, 'guest' );
 		}
 

@@ -13,13 +13,13 @@ function wcqu_get_applied_rule( $product, $role = null ) {
 	// Check for site wide rule
 	$options = get_option( 'ipq_options' );
 	
-	if ( get_post_meta( $product->id, '_wpbo_deactive', true ) == 'on' ) {
+	if ( get_post_meta( $product->id, '_wpbo_deactive', true ) === 'on' ) {
 		return 'inactive';
 		
-	} elseif ( get_post_meta( $product->id, '_wpbo_override', true ) == 'on' ) {
+	} elseif ( get_post_meta( $product->id, '_wpbo_override', true ) === 'on' ) {
 		return 'override';
 	
-	} elseif ( isset( $options['ipq_site_rule_active'] ) and $options['ipq_site_rule_active'] == 'on' ) {
+	} elseif ( isset( $options['ipq_site_rule_active'] ) and $options['ipq_site_rule_active'] === 'on' ) {
 		return 'sitewide';
 		
 	} else {
@@ -44,7 +44,7 @@ function wcqu_get_applied_rule_obj( $product, $role = null ) {
 	// Get role if not passed
 	if(!is_user_logged_in()) {
 		$role = 'guest';
-	} else if ( $role == NULL ) {
+	} else if ( $role === NULL ) {
 		$user_data = get_userdata( get_current_user_id() );
 		if ( $user_data->roles ) {
 			foreach ( $user_data->roles as $cap => $val ) {
@@ -102,13 +102,13 @@ function wcqu_get_applied_rule_obj( $product, $role = null ) {
 	 	$tags = get_post_meta( $rule->ID, '_tags' );
 	 	$roles = get_post_meta( $rule->ID, '_roles' );
 	 		 	
-	 	if( $cats != false )
+	 	if( !empty($cats) )
 		 	$cats = $cats[0];
 	 	
-	 	if( $tags != false )
+	 	if( !empty($tags) )
 		 	$tags = $tags[0];
 
-		if ( $roles != false )
+		if ( !empty($roles) )
 		 	$roles = $roles[0];
 
 	 	$rule_taxes = array_merge( $tags, $cats );
@@ -122,11 +122,11 @@ function wcqu_get_applied_rule_obj( $product, $role = null ) {
 	 	}
 	 	
 	 	// If the rule applies, check the priority
-	 	if ( $apply_rule == true ) {
+	 	if ( $apply_rule === true ) {
 	 	
 	 		$priority = get_post_meta( $rule->ID, '_priority', true );	
 
-	 		if( $priority != '' and $top > $priority or $top == null ) {
+	 		if( !empty($priority) and $top > $priority or $top === null ) {
 	 			$top = $priority;
 	 			$top_rule = $rule;
 		 	}
@@ -147,45 +147,45 @@ function wcqu_get_applied_rule_obj( $product, $role = null ) {
 function wcqu_get_value_from_rule( $type, $product, $rule ) {
 
 	// Validate $type
-	if ( $type != 'min' and 
-		 $type != 'max' and 
-		 $type != 'step' and 
-		 $type != 'all' and 
-		 $type != 'priority' and 
-		 $type != 'role' and
-		 $type != 'min_oos' and
-		 $type != 'max_oos'
+	if ( $type !== 'min' and 
+		 $type !== 'max' and 
+		 $type !== 'step' and 
+		 $type !== 'all' and 
+		 $type !== 'priority' and 
+		 $type !== 'role' and
+		 $type !== 'min_oos' and
+		 $type !== 'max_oos'
 		) {
 		return null;
 	
 	// Validate for missing rule	
-	} elseif ( $rule == null ) {
+	} elseif ( $rule === null ) {
 		return null;
 	
 	// Return Null if Inactive
-	} elseif ( $rule == 'inactive' ) {
+	} elseif ( $rule === 'inactive' ) {
 		return null;
 	
 	// Return Product Meta if Override is on
-	} elseif ( $rule == 'override' ) {
+	} elseif ( $rule === 'override' ) {
 		
 		// Check if the product is out of stock
 		$stock = $product->get_stock_quantity();
 
 		// Check if the product is under stock management and out of stock
-		if ( strlen( $stock ) != 0 and $stock <= 0 ) {
+		if ( strlen( $stock ) !== 0 and $stock <= 0 ) {
 			
 			// Return Out of Stock values if they exist
 			switch ( $type ) {
 				case 'min':
 					$min_oos = get_post_meta( $product->id, '_wpbo_minimum_oos', true );
-					if ( $min_oos != '' )
+					if ( !empty($min_oos) )
 						return $min_oos;
 					break;
 				
 				case 'max':
 					$max_oos = get_post_meta( $product->id, '_wpbo_maximum_oos', true );
-					if ( $max_oos != '' )
+					if ( !empty($max_oos) )
 						return $max_oos;
 					break;	
 			}  
@@ -228,7 +228,7 @@ function wcqu_get_value_from_rule( $type, $product, $rule ) {
 		}		
 	
 	// Check for Site Wide Rule
-	} elseif ( $rule == 'sitewide' ) {
+	} elseif ( $rule === 'sitewide' ) {
 
 		$options = get_option( 'ipq_options' );
 		
@@ -354,7 +354,7 @@ function wcqu_validate_number( $number ) {
 	$number = stripslashes( $number );
 //	$number = intval( $number );
 	
-	if ( $number == 0 ) {
+	if ( empty($number) ) {
 		return null;
 	} elseif ( $number < 0 ) {
 		return null;

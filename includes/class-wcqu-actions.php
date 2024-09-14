@@ -10,7 +10,7 @@ class WC_Quantities_and_Units_Actions {
 		// Conditionally add quantity note to product page
 		$settings = get_option( 'ipq_options' );
 
-		if ( isset( $settings['ipq_show_qty_note'] ) and $settings['ipq_show_qty_note'] == 'on' ) {
+		if ( isset( $settings['ipq_show_qty_note'] ) and $settings['ipq_show_qty_note'] === 'on' ) {
 			add_action( 'init', array( $this, 'apply_product_notification' ) );
 		}
 		
@@ -31,7 +31,7 @@ class WC_Quantities_and_Units_Actions {
 		$settings = get_option( 'ipq_options' );
 		extract( $settings );
 		
-		if ( isset( $ipq_show_qty_note ) and $ipq_show_qty_note == 'on' ) {
+		if ( isset( $ipq_show_qty_note ) and $ipq_show_qty_note === 'on' ) {
 			
 			// Get add_to_cart action priority
 			global $wp_filter;
@@ -40,10 +40,10 @@ class WC_Quantities_and_Units_Actions {
 			$cart_priority = has_filter( $action_to_check, $target_function );
 			
 			// Set the priory level based on add to cart
-			if ( $cart_priority == null ) {
+			if ( empty($cart_priority) ) {
 				$priority = 30;
 				
-			} elseif ( isset( $ipq_show_qty_note_pos ) and $ipq_show_qty_note_pos == 'below' ) {
+			} elseif ( isset( $ipq_show_qty_note_pos ) and $ipq_show_qty_note_pos === 'below' ) {
 				$priority = $cart_priority + 1;
 												
 			} else {
@@ -69,7 +69,7 @@ class WC_Quantities_and_Units_Actions {
 			return;
 		}
 		
-		if( $product->product_type == 'grouped' )
+		if( $product->product_type === 'grouped' )
 			return;
 		
 		$settings = get_option( 'ipq_options' );
@@ -79,7 +79,7 @@ class WC_Quantities_and_Units_Actions {
 		$rule = wcqu_get_applied_rule( $product );
 		
 		// Return nothing if APQ is deactivated
-		if ( $rule == 'inactive' or $rule == null ) {
+		if ( $rule === 'inactive' or empty($rule) ) {
 			return; 
 		}
 		
@@ -87,7 +87,7 @@ class WC_Quantities_and_Units_Actions {
 		$stock = $product->get_stock_quantity();
 
 		// Check if the product is under stock management and out of stock
-		if ( strlen( $stock ) != 0 and $stock <= 0 ) {
+		if ( strlen( $stock ) !== 0 and $stock <= 0 ) {
 			$min = wcqu_get_value_from_rule( 'min_oos', $product, $rule );
 			$max = wcqu_get_value_from_rule( 'max_oos', $product, $rule );
 		} else {
@@ -98,7 +98,7 @@ class WC_Quantities_and_Units_Actions {
 		$step = wcqu_get_value_from_rule( 'step', $product, $rule );
 
 		// If sitewide rule is applied, convert return arrays to values
-		if ( $rule == 'sitewide' and strlen( $stock ) != 0 and $stock <= 0  ) {
+		if ( $rule === 'sitewide' and strlen( $stock ) !== 0 and $stock <= 0  ) {
 			if ( is_array( $min ) )
 				$min = $min['min_oos'];
 		
@@ -108,7 +108,7 @@ class WC_Quantities_and_Units_Actions {
 			if ( is_array( $step ) ) {
 				$step = $step['step'];
 			}
-		} else if ( $rule == 'sitewide' ) {
+		} else if ( $rule === 'sitewide' ) {
 			if ( is_array( $min ) )
 				$min = $min['min'];
 		
@@ -132,7 +132,7 @@ class WC_Quantities_and_Units_Actions {
 
 			// Output result with optional custom class
 			echo "<span";
-			if ( isset( $ipq_qty_class ) and $ipq_qty_class != '' )
+			if ( isset( $ipq_qty_class ) and !empty($ipq_qty_class) )
 				echo " class='" . $ipq_qty_class . "'";
 			echo ">";	
 			echo $ipq_qty_text;
